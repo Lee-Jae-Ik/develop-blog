@@ -1,0 +1,11 @@
+spring:
+  profiles: local
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/blog?serverTimezone=Asia/Seoul
+    username: root
+    password: lji39220922
+server:
+  port: 8080
+mybatis:
+  mapper-locations: classpath:mapper/**/*.xml
