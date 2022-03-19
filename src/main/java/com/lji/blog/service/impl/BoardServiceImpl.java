@@ -3,8 +3,8 @@ package com.lji.blog.service.impl;
 import com.lji.blog.exception.BlogApiRuntimeException;
 import com.lji.blog.mapper.BoardMapper;
 import com.lji.blog.model.response.BlogApiResult;
-import com.lji.blog.model.vo.BoardDetailVo;
-import com.lji.blog.model.vo.BoardVo;
+import com.lji.blog.model.dto.BoardDetailDto;
+import com.lji.blog.model.dto.BoardShowDto;
 import com.lji.blog.model.schema.Board;
 import com.lji.blog.repository.BoardRepository;
 import com.lji.blog.service.BoardService;
@@ -40,10 +40,10 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public List<BoardVo> showBoardList(Pageable pageable) {
+    public List<BoardShowDto> showBoardList(Pageable pageable) {
         List<Board> boardList = boardMapper.showBoard(pageable);
         return boardList.stream().map(board ->
-                BoardVo.builder()
+                BoardShowDto.builder()
                         .id(board.getId())
                         .userId(board.getUserId())
                         .title(board.getTitle())
@@ -53,9 +53,9 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public BoardDetailVo showBoardDetail(Long id) {
-        Board board = boardRepository.findById(id).orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.SERVER_ERROR));
-        return BoardDetailVo.builder()
+    public BoardDetailDto showBoardDetail(Long id) {
+        Board board = boardRepository.findById(id).orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_BOARD));
+        return BoardDetailDto.builder()
                 .id(board.getId())
                 .userId(board.getUserId())
                 .title(board.getTitle())

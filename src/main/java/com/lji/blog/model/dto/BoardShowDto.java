@@ -1,9 +1,9 @@
-package com.lji.blog.model.vo;
+package com.lji.blog.model.dto;
 
 import lombok.*;
 
 /**
- * BoardDetailVo
+ * BoardVo
  *
  * @author Lee-Jae-Ik
  * @version 0.1
@@ -14,11 +14,11 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class BoardDetailVo {
+public class BoardShowDto {
 
     private Long id;
     private Long userId;
     private String title;
-    private String contents;
+    private String createdDate;
     private String modifiedDate;
 }

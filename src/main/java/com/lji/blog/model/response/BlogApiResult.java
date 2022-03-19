@@ -17,8 +17,12 @@ import java.util.Map;
 public enum BlogApiResult {
 
     NONE(0, "NONE"),
+
     SUCCESS(200, "SUCCESS"),
-    SERVER_ERROR(-1, "SERVER ERROR")
+
+    SERVER_ERROR(-1, "SERVER ERROR"),
+    ALREADY_HAVE_CATEGORY(9001, "해당 카테고리는 이미 존재 합니다."),
+    NOT_HAVE_BOARD(9002, "해당 게시글은 존재하지 않습니다.")
     ;
 
     @Getter

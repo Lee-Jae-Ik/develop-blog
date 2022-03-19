@@ -42,4 +42,8 @@ public class Board {
     @DateTimeFormat(pattern = "yyyyMMddHHmmss")
     private LocalDateTime modifiedDate;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "categoryId", insertable = false, updatable = false)
+    private Category category;
+
 }
