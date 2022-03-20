@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 /**
  * CategoryServiceImpl
@@ -21,7 +22,6 @@ import javax.transaction.Transactional;
  * @since 2022-03-19
  */
 @Service
-@Transactional
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
@@ -32,7 +32,8 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryIdDto saveCategory(CategorySaveDto categorySaveDto) {
-        Category findCategory = categoryRepository.findCategoryByIdAndCategoryName(categorySaveDto.getId(), categorySaveDto.getCategoryName());
+        Category findCategory = categoryRepository.
+                        findCategoryByIdAndCategoryName(categorySaveDto.getId(), categorySaveDto.getCategoryName());
 
         if (!ObjectUtils.isEmpty(findCategory)) {
             throw new BlogApiRuntimeException(BlogApiResult.ALREADY_HAVE_CATEGORY);

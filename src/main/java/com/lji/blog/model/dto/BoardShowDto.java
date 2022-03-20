@@ -1,5 +1,6 @@
 package com.lji.blog.model.dto;
 
+import com.lji.blog.model.schema.Category;
 import lombok.*;
 
 /**
@@ -12,8 +13,6 @@ import lombok.*;
  */
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 public class BoardShowDto {
 
     private Long id;
@@ -21,4 +20,15 @@ public class BoardShowDto {
     private String title;
     private String createdDate;
     private String modifiedDate;
+    private Category category;
+
+    @Builder
+    public BoardShowDto(Long id, Long userId, String title, String createdDate, String modifiedDate, Category category) {
+        this.id = id;
+        this.userId = userId;
+        this.title = title;
+        this.createdDate = createdDate;
+        this.modifiedDate = modifiedDate;
+        this.category = category;
+    }
 }

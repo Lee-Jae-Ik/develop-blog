@@ -6,12 +6,15 @@ import com.lji.blog.model.response.BlogApiResult;
 import com.lji.blog.model.dto.BoardDetailDto;
 import com.lji.blog.model.dto.BoardShowDto;
 import com.lji.blog.model.schema.Board;
+import com.lji.blog.model.schema.Category;
 import com.lji.blog.repository.BoardRepository;
+import com.lji.blog.repository.CategoryRepository;
 import com.lji.blog.service.BoardService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,10 +31,12 @@ public class BoardServiceImpl implements BoardService {
 
     private final BoardRepository boardRepository;
     private final BoardMapper boardMapper;
+    private final CategoryRepository categoryRepository;
 
-    public BoardServiceImpl(BoardRepository boardRepository, BoardMapper boardMapper) {
+    public BoardServiceImpl(BoardRepository boardRepository, BoardMapper boardMapper, CategoryRepository categoryRepository) {
         this.boardRepository = boardRepository;
         this.boardMapper = boardMapper;
+        this.categoryRepository = categoryRepository;
     }
 
     @Override
@@ -49,6 +54,7 @@ public class BoardServiceImpl implements BoardService {
                         .title(board.getTitle())
                         .createdDate(board.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                         .modifiedDate(board.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                        .category(categoryRepository.findById(board.getCategoryId()).orElse(null))
                         .build()).collect(Collectors.toList());
     }
 

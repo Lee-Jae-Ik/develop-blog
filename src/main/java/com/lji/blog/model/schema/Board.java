@@ -16,8 +16,6 @@ import java.time.LocalDateTime;
  */
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 @Entity
 public class Board {
 
@@ -42,8 +40,22 @@ public class Board {
     @DateTimeFormat(pattern = "yyyyMMddHHmmss")
     private LocalDateTime modifiedDate;
 
+    @Column(name = "category_id")
+    private Long categoryId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoryId", insertable = false, updatable = false)
     private Category category;
 
+    @Builder
+    public Board(Long id, Long userId, String title, LocalDateTime createdDate, String contents, LocalDateTime modifiedDate, Long categoryId, Category category) {
+        this.id = id;
+        this.userId = userId;
+        this.title = title;
+        this.createdDate = createdDate;
+        this.contents = contents;
+        this.modifiedDate = modifiedDate;
+        this.categoryId = categoryId;
+        this.category = category;
+    }
 }

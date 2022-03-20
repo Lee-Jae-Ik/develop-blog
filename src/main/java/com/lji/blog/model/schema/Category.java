@@ -13,9 +13,7 @@ import javax.persistence.*;
  * @since 2022-03-19
  */
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
+@NoArgsConstructor
 @Entity
 @Table(name = "category")
 public class Category {
@@ -24,8 +22,16 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "category_name")
+    @Column(name = "category_name", unique = true)
     private String categoryName;
 
+    @Column(name = "post_count")
     private int postCount;
+
+    @Builder
+    public Category(Long id, String categoryName, int postCount) {
+        this.id = id;
+        this.categoryName = categoryName;
+        this.postCount = postCount;
+    }
 }

@@ -10,7 +10,8 @@
                user_id as userId,
                title as title,
                created_date as createdDate,
-               modified_date as modifiedDate
+               modified_date as modifiedDate,
+               category_id as categoryId
         from board
     </select>
 </mapper>
