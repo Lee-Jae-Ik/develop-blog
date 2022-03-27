@@ -1,6 +1,7 @@
 package com.lji.blog.controller;
 
 import com.lji.blog.controller.base.BaseController;
+import com.lji.blog.model.dto.BoardSaveDto;
 import com.lji.blog.model.response.BlogApiResponse;
 import com.lji.blog.model.schema.Board;
 import com.lji.blog.service.BoardService;
@@ -26,8 +27,8 @@ public class BoardController extends BaseController {
     }
 
     @PostMapping("/board")
-    public ResponseEntity<BlogApiResponse> saveBoard(@RequestBody Board board) {
-        return responseApi(boardService.saveBoard(board));
+    public ResponseEntity<BlogApiResponse> saveBoard(@RequestBody BoardSaveDto boardSaveDto) {
+        return responseApi(boardService.saveBoard(boardSaveDto));
     }
 
     @GetMapping("/board")

@@ -2,6 +2,7 @@ package com.lji.blog.service.impl;
 
 import com.lji.blog.exception.BlogApiRuntimeException;
 import com.lji.blog.mapper.BoardMapper;
+import com.lji.blog.model.dto.BoardSaveDto;
 import com.lji.blog.model.response.BlogApiResult;
 import com.lji.blog.model.dto.BoardDetailDto;
 import com.lji.blog.model.dto.BoardShowDto;
@@ -13,6 +14,7 @@ import com.lji.blog.service.BoardService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,8 +42,17 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public Board saveBoard(Board board) {
-        return boardRepository.save(board);
+    public Board saveBoard(BoardSaveDto boardSaveDto) {
+        Board insertBoard = Board.builder()
+                .userId(boardSaveDto.getUserid())
+                .title(boardSaveDto.getTitle())
+                .contents(boardSaveDto.getContents())
+                .createdDate(LocalDateTime.now())
+                .modifiedDate(LocalDateTime.now())
+                .categoryId(boardSaveDto.getCategoryId())
+                .category(categoryRepository.findById(boardSaveDto.getCategoryId()).orElse(null))
+                .build();
+        return boardRepository.save(insertBoard);
     }
 
     @Override
@@ -60,7 +71,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public BoardDetailDto showBoardDetail(Long id) {
-        Board board = boardRepository.findById(id).orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_BOARD));
+        Board board = boardRepository.findBoardById(id).orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_BOARD));
         return BoardDetailDto.builder()
                 .id(board.getId())
                 .userId(board.getUserId())
