@@ -14,6 +14,8 @@
                category_id as categoryId
         from board
         join category c on c.id = board.category_id
-        where c.id = #{categoryId}
+        <if test="categoryId != null">
+            where c.id = #{categoryId}
+        </if>
     </select>
 </mapper>

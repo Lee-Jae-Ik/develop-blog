@@ -33,7 +33,7 @@ public class BoardController extends BaseController {
 
     @GetMapping("/board")
     public ResponseEntity<BlogApiResponse> showBoardList(@PageableDefault(size = 10) Pageable pageable,
-                                                         @RequestParam(value = "categoryId") Long categoryId) {
+                                                         @RequestParam(value = "categoryId", required = false) Long categoryId) {
         return responseApi(boardService.showBoardList(pageable,categoryId));
     }
 
