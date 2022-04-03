@@ -5,6 +5,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * Board
@@ -47,8 +48,11 @@ public class Board {
     @JoinColumn(name = "category_id", insertable = false, updatable = false)
     private Category category;
 
+    @OneToMany
+    private List<Comment> commentList;
+
     @Builder
-    public Board(Long id, Long userId, String title, LocalDateTime createdDate, String contents, LocalDateTime modifiedDate, Long categoryId, Category category) {
+    public Board(Long id, Long userId, String title, LocalDateTime createdDate, String contents, LocalDateTime modifiedDate, Long categoryId, Category category, List<Comment> commentList) {
         this.id = id;
         this.userId = userId;
         this.title = title;
@@ -57,5 +61,6 @@ public class Board {
         this.modifiedDate = modifiedDate;
         this.categoryId = categoryId;
         this.category = category;
+        this.commentList = commentList;
     }
 }
