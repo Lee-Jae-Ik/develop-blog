@@ -16,16 +16,16 @@ import lombok.*;
 public class BoardShowDto {
 
     private Long id;
-    private Long userId;
+    private String userName;
     private String title;
     private String createdDate;
     private String modifiedDate;
     private Category category;
 
     @Builder
-    public BoardShowDto(Long id, Long userId, String title, String createdDate, String modifiedDate, Category category) {
+    public BoardShowDto(Long id, String userName, String title, String createdDate, String modifiedDate, Category category) {
         this.id = id;
-        this.userId = userId;
+        this.userName = userName;
         this.title = title;
         this.createdDate = createdDate;
         this.modifiedDate = modifiedDate;

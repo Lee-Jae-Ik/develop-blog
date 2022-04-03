@@ -26,6 +26,7 @@ public class Category {
     private String categoryName;
 
     @Column(name = "post_count")
+    @Setter
     private int postCount;
 
     @Builder

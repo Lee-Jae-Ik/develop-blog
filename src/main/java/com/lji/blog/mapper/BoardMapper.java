@@ -18,5 +18,5 @@ import java.util.List;
 @Mapper
 @Repository
 public interface BoardMapper {
-    List<Board> showBoard(Pageable pageable);
+    List<Board> showBoard(Pageable pageable, Long categoryId);
 }

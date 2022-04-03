@@ -17,8 +17,9 @@ import lombok.*;
 public class BoardDetailDto {
 
     private Long id;
-    private Long userId;
+    private String userName;
     private String title;
     private String contents;
     private String modifiedDate;
+    private String categoryName;
 }
