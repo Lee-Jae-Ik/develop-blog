@@ -21,14 +21,16 @@ public class BoardShowDto {
     private String createdDate;
     private String modifiedDate;
     private Category category;
+    private int commentCount;
 
     @Builder
-    public BoardShowDto(Long id, String userName, String title, String createdDate, String modifiedDate, Category category) {
+    public BoardShowDto(Long id, String userName, String title, String createdDate, String modifiedDate, Category category, int commentCount) {
         this.id = id;
         this.userName = userName;
         this.title = title;
         this.createdDate = createdDate;
         this.modifiedDate = modifiedDate;
         this.category = category;
+        this.commentCount = commentCount;
     }
 }

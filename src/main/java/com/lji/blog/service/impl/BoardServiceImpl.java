@@ -81,6 +81,7 @@ public class BoardServiceImpl implements BoardService {
                         .createdDate(board.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                         .modifiedDate(board.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                         .category(categoryRepository.findById(board.getCategoryId()).orElse(null))
+                        .commentCount(commentRepository.countCommentByBoardId(board.getId()))
                         .build()).collect(Collectors.toList());
     }
 
