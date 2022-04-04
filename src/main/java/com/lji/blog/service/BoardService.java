@@ -18,6 +18,6 @@ import java.util.List;
  */
 public interface BoardService {
     Board saveBoard(BoardSaveDto boardSaveDto);
-    List<BoardShowDto> showBoardList(Pageable pageable);
+    List<BoardShowDto> showBoardList(Pageable pageable, Long categoryId);
     BoardDetailDto showBoardDetail(Long id);
 }

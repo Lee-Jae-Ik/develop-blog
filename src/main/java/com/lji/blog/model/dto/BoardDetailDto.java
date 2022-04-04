@@ -1,6 +1,9 @@
 package com.lji.blog.model.dto;
 
+import com.lji.blog.model.schema.Comment;
 import lombok.*;
+
+import java.util.List;
 
 /**
  * BoardDetailVo
@@ -17,8 +20,10 @@ import lombok.*;
 public class BoardDetailDto {
 
     private Long id;
-    private Long userId;
+    private String userName;
     private String title;
     private String contents;
     private String modifiedDate;
+    private String categoryName;
+    private List<Comment> commentList;
 }

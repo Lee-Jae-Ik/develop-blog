@@ -32,8 +32,9 @@ public class BoardController extends BaseController {
     }
 
     @GetMapping("/board")
-    public ResponseEntity<BlogApiResponse> showBoardList(@PageableDefault(size = 10) Pageable pageable) {
-        return responseApi(boardService.showBoardList(pageable));
+    public ResponseEntity<BlogApiResponse> showBoardList(@PageableDefault(size = 10) Pageable pageable,
+                                                         @RequestParam(value = "categoryId", required = false) Long categoryId) {
+        return responseApi(boardService.showBoardList(pageable,categoryId));
     }
 
     @GetMapping("/board/{id}")

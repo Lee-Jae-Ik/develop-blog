@@ -6,12 +6,16 @@
 <mapper namespace="com.lji.blog.mapper.BoardMapper">
     <select id="showBoard" resultType="com.lji.blog.model.schema.Board">
         select
-               id as id,
+               board.id as id,
                user_id as userId,
                title as title,
                created_date as createdDate,
                modified_date as modifiedDate,
                category_id as categoryId
         from board
+        join category c on c.id = board.category_id
+        <if test="categoryId != null">
+            where c.id = #{categoryId}
+        </if>
     </select>
 </mapper>

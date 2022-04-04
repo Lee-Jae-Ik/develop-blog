@@ -32,16 +32,14 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public CategoryIdDto saveCategory(CategorySaveDto categorySaveDto) {
-        Category findCategory = categoryRepository.
-                        findCategoryByIdAndCategoryName(categorySaveDto.getId(), categorySaveDto.getCategoryName());
-
-        if (!ObjectUtils.isEmpty(findCategory)) {
-            throw new BlogApiRuntimeException(BlogApiResult.ALREADY_HAVE_CATEGORY);
-        }
+        Category findCategory = Optional.ofNullable(categoryRepository.
+                findCategoryByIdAndCategoryName(categorySaveDto.getId(), categorySaveDto.getCategoryName()))
+                .orElseGet(Category::new);
 
         Category insertCategory = Category.builder()
+                .id(findCategory.getId())
                 .categoryName(categorySaveDto.getCategoryName())
-                .postCount(0)
+                .postCount(findCategory.getPostCount())
                 .build();
         categoryRepository.save(insertCategory);
 
