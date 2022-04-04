@@ -1,5 +1,6 @@
 package com.lji.blog.model.schema;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -32,6 +33,7 @@ public class Board {
 
     @Column(name = "created_date")
     @DateTimeFormat(pattern = "yyyyMMddHHmmss")
+    @JsonFormat(shape =  JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdDate;
 
     @Column(name = "contents")
@@ -39,6 +41,7 @@ public class Board {
 
     @Column(name = "modified_date")
     @DateTimeFormat(pattern = "yyyyMMddHHmmss")
+    @JsonFormat(shape =  JsonFormat.Shape.STRING,pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime modifiedDate;
 
     @Column(name = "category_id")

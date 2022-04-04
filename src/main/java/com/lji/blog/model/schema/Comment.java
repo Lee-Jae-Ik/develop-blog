@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
  */
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "comment")
 @Entity
 public class Comment {
 
