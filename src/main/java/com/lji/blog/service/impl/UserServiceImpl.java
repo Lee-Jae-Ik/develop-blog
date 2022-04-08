@@ -1,11 +1,18 @@
 package com.lji.blog.service.impl;
 
+import com.lji.blog.exception.BlogApiRuntimeException;
+import com.lji.blog.model.dto.UserSignInDto;
+import com.lji.blog.model.response.BlogApiResult;
+import com.lji.blog.model.response.TokenResponse;
+import com.lji.blog.model.schema.Auth;
 import com.lji.blog.model.schema.User;
+import com.lji.blog.repository.AuthRepository;
 import com.lji.blog.repository.UserRepository;
 import com.lji.blog.service.UserService;
-import org.springframework.http.ResponseEntity;
+import com.lji.blog.util.TokenUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
+
+import java.util.Optional;
 
 /**
  * UserServiceImpl
@@ -19,14 +26,48 @@ import org.springframework.util.ObjectUtils;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final AuthRepository authRepository;
+    private final TokenUtils tokenUtils;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, AuthRepository authRepository, TokenUtils tokenUtils) {
         this.userRepository = userRepository;
+        this.authRepository = authRepository;
+        this.tokenUtils = tokenUtils;
     }
 
     @Override
     public User saveUser(User user) {
         userRepository.save(user);
         return user;
+    }
+
+    @Override
+    public TokenResponse signIn(UserSignInDto userSignInDto) {
+
+        User findUser = Optional.ofNullable(userRepository.findUserByUserIdAAndUserPassword(userSignInDto.getUserId(), userSignInDto.getUserPassword()))
+                .orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_USER));
+
+        Auth findAuth = Optional.ofNullable(authRepository.findAuthByUser(findUser.getId()))
+                .orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_USER));
+
+        String accessToken;
+        String refreshToken = findAuth.getRefreshToken();
+
+        if (tokenUtils.isValidRefreshToken(refreshToken)) {
+            accessToken = tokenUtils.generateJwtToken(findUser);
+            return TokenResponse.builder()
+                    .ACCESS_TOKEN(accessToken)
+                    .REFRESH_TOKEN(refreshToken)
+                    .build();
+        } else {
+            accessToken = tokenUtils.generateJwtToken(findUser);
+            refreshToken  = tokenUtils.saveRefreshToken(findUser);
+            findAuth.refreshUpdate(refreshToken);
+        }
+
+        return TokenResponse.builder()
+                .ACCESS_TOKEN(accessToken)
+                .REFRESH_TOKEN(refreshToken)
+                .build();
     }
 }

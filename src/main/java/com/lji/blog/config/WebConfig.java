@@ -20,6 +20,8 @@ public class WebConfig implements WebMvcConfigurer {
         RedirectViewControllerRegistration redirectViewControllerRegistration = registry.addRedirectViewController("/", "swagger-ui.html");
     }
 
+
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry){
         registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");

@@ -1,5 +1,7 @@
 package com.lji.blog.service;
 
+import com.lji.blog.model.dto.UserSignInDto;
+import com.lji.blog.model.response.TokenResponse;
 import com.lji.blog.model.schema.User;
 import org.springframework.http.ResponseEntity;
 
@@ -14,4 +16,6 @@ import org.springframework.http.ResponseEntity;
 public interface UserService {
 
     User saveUser(User user);
+
+    TokenResponse signIn(UserSignInDto userSignInDto);
 }
