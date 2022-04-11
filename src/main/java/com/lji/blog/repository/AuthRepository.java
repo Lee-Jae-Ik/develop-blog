@@ -2,6 +2,7 @@ package com.lji.blog.repository;
 
 import com.lji.blog.model.schema.Auth;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
@@ -17,5 +18,7 @@ import javax.transaction.Transactional;
 @Repository
 @Transactional
 public interface AuthRepository extends JpaRepository<Auth, Long> {
+
+    @Query("select a from Auth a join User u on a.user.id = u.id")
     Auth findAuthByUser(Long userId);
 }

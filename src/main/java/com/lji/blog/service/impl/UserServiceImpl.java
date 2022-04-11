@@ -36,15 +36,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User saveUser(User user) {
+    public TokenResponse saveUser(User user) {
         userRepository.save(user);
-        return user;
+        String accessToken = tokenUtils.generateJwtToken(user);
+        String refreshToken = tokenUtils.saveRefreshToken(user);
+
+        authRepository.save(Auth.builder()
+                        .user(user)
+                        .refreshToken(refreshToken)
+                .build());
+
+        return TokenResponse.builder()
+                .ACCESS_TOKEN(accessToken)
+                .REFRESH_TOKEN(refreshToken)
+                .build();
     }
 
     @Override
     public TokenResponse signIn(UserSignInDto userSignInDto) {
 
-        User findUser = Optional.ofNullable(userRepository.findUserByUserIdAAndUserPassword(userSignInDto.getUserId(), userSignInDto.getUserPassword()))
+        User findUser = Optional.ofNullable(userRepository.findUserByUserIdAndUserPassword(userSignInDto.getUserId(), userSignInDto.getUserPassword()))
                 .orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_USER));
 
         Auth findAuth = Optional.ofNullable(authRepository.findAuthByUser(findUser.getId()))

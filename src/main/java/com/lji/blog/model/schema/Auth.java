@@ -37,8 +37,9 @@ public class Auth {
     }
 
     @Builder
-    public Auth(Long id, String refreshToken) {
+    public Auth(Long id, String refreshToken, User user) {
         this.id = id;
         this.refreshToken = refreshToken;
+        this.user = user;
     }
 }

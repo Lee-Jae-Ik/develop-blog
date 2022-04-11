@@ -1,6 +1,7 @@
 package com.lji.blog.controller;
 
 import com.lji.blog.controller.base.BaseController;
+import com.lji.blog.model.dto.UserSignInDto;
 import com.lji.blog.model.response.BlogApiResponse;
 import com.lji.blog.model.schema.User;
 import com.lji.blog.service.UserService;
@@ -29,5 +30,10 @@ public class UserController extends BaseController {
     @PostMapping("/user")
     public ResponseEntity<BlogApiResponse> saveUser(@RequestBody User user) {
         return responseApi(userService.saveUser(user));
+    }
+
+    @PostMapping("user/signin")
+    public ResponseEntity<BlogApiResponse> signInUser(@RequestBody UserSignInDto userSignInDto) {
+        return responseApi(userService.signIn(userSignInDto));
     }
 }
