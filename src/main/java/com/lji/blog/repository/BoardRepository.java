@@ -4,17 +4,14 @@ import com.lji.blog.model.schema.Board;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 /**
- * BoardRepository
+ * BoardRepostiory
  *
  * @author Lee-Jae-Ik
  * @version 0.1
  * @see
- * @since 2022/03/01
+ * @since 2022-04-11
  */
 @Repository
-public interface BoardRepository extends JpaRepository<Board, Long> {
-    Optional<Board> findBoardById(Long id);
+public interface BoardRepository extends JpaRepository<Board, Long>, BoardRepositoryCustom {
 }
