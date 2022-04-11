@@ -2,6 +2,8 @@ package com.lji.blog.repository;
 
 import com.lji.blog.model.schema.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -14,5 +16,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    User findUserByUserIdAAndUserPassword(String userId,String userPassword);
+    User findUserByUserIdAndUserPassword(String userId,String userPassword);
 }

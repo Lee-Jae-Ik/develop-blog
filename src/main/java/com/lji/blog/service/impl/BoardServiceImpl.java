@@ -13,6 +13,7 @@ import com.lji.blog.repository.BoardRepository;
 import com.lji.blog.repository.CategoryRepository;
 import com.lji.blog.repository.CommentRepository;
 import com.lji.blog.repository.UserRepository;
+import com.lji.blog.repository.impl.BoardRepositoryCustomImpl;
 import com.lji.blog.service.BoardService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -33,18 +34,18 @@ import java.util.stream.Collectors;
 @Service
 public class BoardServiceImpl implements BoardService {
 
-    private final BoardRepository boardRepository;
     private final BoardMapper boardMapper;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
+    private final BoardRepository boardRepository;
 
-    public BoardServiceImpl(BoardRepository boardRepository, BoardMapper boardMapper, CategoryRepository categoryRepository, UserRepository userRepository, CommentRepository commentRepository) {
-        this.boardRepository = boardRepository;
+    public BoardServiceImpl(BoardMapper boardMapper, CategoryRepository categoryRepository, UserRepository userRepository, CommentRepository commentRepository, BoardRepository boardRepository) {
         this.boardMapper = boardMapper;
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
+        this.boardRepository = boardRepository;
     }
 
     @Override
@@ -72,7 +73,7 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public List<BoardShowDto> showBoardList(Pageable pageable, Long categoryId) {
-        List<Board> boardList = boardMapper.showBoard(pageable,categoryId);
+        List<Board> boardList = boardRepository.findBoardByCategoryId(pageable,categoryId);
         return boardList.stream().map(board ->
                 BoardShowDto.builder()
                         .id(board.getId())

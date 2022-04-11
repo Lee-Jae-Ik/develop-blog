@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public TokenResponse signIn(UserSignInDto userSignInDto) {
 
-        User findUser = Optional.ofNullable(userRepository.findUserByUserIdAAndUserPassword(userSignInDto.getUserId(), userSignInDto.getUserPassword()))
+        User findUser = Optional.ofNullable(userRepository.findUserByUserIdAndUserPassword(userSignInDto.getUserId(), userSignInDto.getUserPassword()))
                 .orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_USER));
 
         Auth findAuth = Optional.ofNullable(authRepository.findAuthByUser(findUser.getId()))
