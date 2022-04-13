@@ -30,7 +30,7 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
     public List<Board> findBoardByCategoryId(Pageable pageable, Long categoryId) {
         return jpaQueryFactory
                 .selectFrom(QBoard.board)
-                .where(categoryId == null ? QBoard.board.categoryId.isNull() : QBoard.board.categoryId.eq(categoryId))
+                .where(categoryId == null ? QBoard.board.categoryId.isNotNull() : QBoard.board.categoryId.eq(categoryId))
                 .fetch();
     }
 }

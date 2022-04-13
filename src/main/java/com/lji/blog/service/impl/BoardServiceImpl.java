@@ -1,7 +1,6 @@
 package com.lji.blog.service.impl;
 
 import com.lji.blog.exception.BlogApiRuntimeException;
-import com.lji.blog.mapper.BoardMapper;
 import com.lji.blog.model.dto.BoardSaveDto;
 import com.lji.blog.model.response.BlogApiResult;
 import com.lji.blog.model.dto.BoardDetailDto;
@@ -34,14 +33,12 @@ import java.util.stream.Collectors;
 @Service
 public class BoardServiceImpl implements BoardService {
 
-    private final BoardMapper boardMapper;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final BoardRepository boardRepository;
 
-    public BoardServiceImpl(BoardMapper boardMapper, CategoryRepository categoryRepository, UserRepository userRepository, CommentRepository commentRepository, BoardRepository boardRepository) {
-        this.boardMapper = boardMapper;
+    public BoardServiceImpl(CategoryRepository categoryRepository, UserRepository userRepository, CommentRepository commentRepository, BoardRepository boardRepository) {
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;

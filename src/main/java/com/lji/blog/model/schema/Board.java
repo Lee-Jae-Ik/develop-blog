@@ -47,7 +47,7 @@ public class Board {
     @Column(name = "category_id")
     private Long categoryId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id", insertable = false, updatable = false)
     private Category category;
 
