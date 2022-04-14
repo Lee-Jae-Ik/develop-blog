@@ -18,5 +18,5 @@ import java.util.Optional;
  * @since 2022/03/01
  */
 public interface BoardRepositoryCustom {
-    List<Board> findBoardByCategoryId(Pageable pageable, Long categoryId);
+    List<Board> findBoardByCategoryId(Long categoryId);
 }

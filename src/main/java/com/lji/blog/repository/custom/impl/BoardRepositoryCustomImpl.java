@@ -26,7 +26,7 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
     }
 
     @Override
-    public List<Board> findBoardByCategoryId(Pageable pageable, Long categoryId) {
+    public List<Board> findBoardByCategoryId(Long categoryId) {
         return jpaQueryFactory
                 .selectFrom(QBoard.board)
                 .leftJoin(QBoard.board.category, QCategory.category)

@@ -74,16 +74,12 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional
     public BoardListDto showBoardList(Pageable pageable, Long categoryId) {
-        List<Board> boardList = boardRepository.findBoardByCategoryId(pageable,categoryId);
+        List<Board> boardList = boardRepository.findBoardByCategoryId(categoryId);
 
-        Page<Board> boardPage;
         final int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), boardList.size());
-        if (boardList.size() < 10) {
-            boardPage = new PageImpl<>(boardList.subList(0,boardList.size()), Pageable.unpaged(), boardList.size());
-        } else {
-            boardPage = new PageImpl<>(boardList.subList(start,end),pageable, boardList.size());
-        }
+
+        Page<Board> boardPage = this.listToPage(start,end,boardList,pageable);
 
         List<BoardShowDto> boardShowDtoList = boardPage.stream().map(board ->
                 BoardShowDto.builder()
@@ -117,5 +113,15 @@ public class BoardServiceImpl implements BoardService {
                 .categoryName(category.getCategoryName())
                 .commentList(commentList)
                 .build();
+    }
+
+    private Page<Board> listToPage(int start, int end, List<Board> boardList, Pageable pageable) {
+        Page<Board> boardPage;
+        if (boardList.size() < 10) {
+            boardPage = new PageImpl<>(boardList.subList(0,boardList.size()), Pageable.unpaged(), boardList.size());
+        } else {
+            boardPage = new PageImpl<>(boardList.subList(start,end),pageable, boardList.size());
+        }
+        return boardPage;
     }
 }
