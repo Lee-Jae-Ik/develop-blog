@@ -1,12 +1,10 @@
 package com.lji.blog.service;
 
 import com.lji.blog.model.dto.BoardDetailDto;
+import com.lji.blog.model.dto.BoardListDto;
 import com.lji.blog.model.dto.BoardSaveDto;
-import com.lji.blog.model.dto.BoardShowDto;
 import com.lji.blog.model.schema.Board;
 import org.springframework.data.domain.Pageable;
-
-import java.util.List;
 
 /**
  * BoardService
@@ -18,6 +16,6 @@ import java.util.List;
  */
 public interface BoardService {
     Board saveBoard(BoardSaveDto boardSaveDto);
-    List<BoardShowDto> showBoardList(Pageable pageable, Long categoryId);
+    BoardListDto showBoardList(Pageable pageable, Long categoryId);
     BoardDetailDto showBoardDetail(Long id);
 }

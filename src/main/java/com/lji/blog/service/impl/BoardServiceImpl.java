@@ -1,6 +1,7 @@
 package com.lji.blog.service.impl;
 
 import com.lji.blog.exception.BlogApiRuntimeException;
+import com.lji.blog.model.dto.BoardListDto;
 import com.lji.blog.model.dto.BoardSaveDto;
 import com.lji.blog.model.response.BlogApiResult;
 import com.lji.blog.model.dto.BoardDetailDto;
@@ -12,8 +13,9 @@ import com.lji.blog.repository.BoardRepository;
 import com.lji.blog.repository.CategoryRepository;
 import com.lji.blog.repository.CommentRepository;
 import com.lji.blog.repository.UserRepository;
-import com.lji.blog.repository.custom.impl.*;
 import com.lji.blog.service.BoardService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -71,9 +73,19 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     @Transactional
-    public List<BoardShowDto> showBoardList(Pageable pageable, Long categoryId) {
+    public BoardListDto showBoardList(Pageable pageable, Long categoryId) {
         List<Board> boardList = boardRepository.findBoardByCategoryId(pageable,categoryId);
-        return boardList.stream().map(board ->
+
+        Page<Board> boardPage;
+        final int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), boardList.size());
+        if (boardList.size() < 10) {
+            boardPage = new PageImpl<>(boardList.subList(0,boardList.size()), Pageable.unpaged(), boardList.size());
+        } else {
+            boardPage = new PageImpl<>(boardList.subList(start,end),pageable, boardList.size());
+        }
+
+        List<BoardShowDto> boardShowDtoList = boardPage.stream().map(board ->
                 BoardShowDto.builder()
                         .id(board.getId())
                         .userName(userRepository.findById(board.getUserId()).orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_USER)).getUserName())
@@ -83,6 +95,11 @@ public class BoardServiceImpl implements BoardService {
                         .category(categoryRepository.findById(board.getCategoryId()).orElse(null))
                         .commentCount(commentRepository.countCommentByBoardId(board.getId()))
                         .build()).collect(Collectors.toList());
+
+        return BoardListDto.builder()
+                .boardList(boardShowDtoList)
+                .totalBoardCount(boardList.size())
+                .build();
     }
 
     @Override
