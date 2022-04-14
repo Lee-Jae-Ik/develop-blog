@@ -2,6 +2,7 @@ package com.lji.blog.repository.impl;
 
 import com.lji.blog.model.schema.Board;
 import com.lji.blog.model.schema.QBoard;
+import com.lji.blog.model.schema.QCategory;
 import com.lji.blog.repository.BoardRepositoryCustom;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +31,8 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
     public List<Board> findBoardByCategoryId(Pageable pageable, Long categoryId) {
         return jpaQueryFactory
                 .selectFrom(QBoard.board)
+                .leftJoin(QBoard.board.category, QCategory.category)
+                .fetchJoin()
                 .where(categoryId == null ? QBoard.board.categoryId.isNotNull() : QBoard.board.categoryId.eq(categoryId))
                 .fetch();
     }

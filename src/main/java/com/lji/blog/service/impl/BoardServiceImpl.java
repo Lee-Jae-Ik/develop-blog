@@ -17,6 +17,7 @@ import com.lji.blog.service.BoardService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -69,6 +70,7 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    @Transactional
     public List<BoardShowDto> showBoardList(Pageable pageable, Long categoryId) {
         List<Board> boardList = boardRepository.findBoardByCategoryId(pageable,categoryId);
         return boardList.stream().map(board ->
