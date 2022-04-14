@@ -1,4 +1,4 @@
-package com.lji.blog.repository;
+package com.lji.blog.repository.custom;
 
 import com.lji.blog.model.schema.Board;
 import org.springframework.data.domain.Pageable;

@@ -12,7 +12,7 @@ import com.lji.blog.repository.BoardRepository;
 import com.lji.blog.repository.CategoryRepository;
 import com.lji.blog.repository.CommentRepository;
 import com.lji.blog.repository.UserRepository;
-import com.lji.blog.repository.impl.BoardRepositoryCustomImpl;
+import com.lji.blog.repository.custom.impl.*;
 import com.lji.blog.service.BoardService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

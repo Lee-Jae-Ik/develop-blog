@@ -1,12 +1,11 @@
-package com.lji.blog.repository.impl;
+package com.lji.blog.repository.custom.impl;
 
 import com.lji.blog.model.schema.Board;
 import com.lji.blog.model.schema.QBoard;
 import com.lji.blog.model.schema.QCategory;
-import com.lji.blog.repository.BoardRepositoryCustom;
+import com.lji.blog.repository.custom.BoardRepositoryCustom;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -19,7 +18,6 @@ import java.util.List;
  * @since 2022-04-11
  */
 public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
-
 
     private final JPAQueryFactory jpaQueryFactory;
 
