@@ -110,6 +110,24 @@ public class BoardServiceImpl implements BoardService {
                 .build();
     }
 
+    @Override
+    public BoardListDto searchBoardList(Pageable pageable, String title, String userName) {
+        List<Board> boardList = boardRepository.searchBoardByTitleOrUserName(title,userName,pageable);
+
+        List<BoardShowDto> boardShowDtoList = boardList.stream().map(board ->
+                BoardShowDto.builder()
+                        .id(board.getId())
+                        .userName(userRepository.findById(board.getUserId()).orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_USER)).getUserName())
+                        .title(board.getTitle())
+                        .createdDate(board.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                        .modifiedDate(board.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                        .category(categoryRepository.findById(board.getCategoryId()).orElse(null))
+                        .commentCount(commentRepository.countCommentByBoardId(board.getId()))
+                        .build()).collect(Collectors.toList());
+
+        return BoardListDto.builder().boardList(boardShowDtoList).totalBoardCount(boardList.size()).build();
+    }
+
     private Page<Board> listToPage(int start, int end, List<Board> boardList, Pageable pageable) {
         Page<Board> boardPage;
         if (boardList.size() < 10) {

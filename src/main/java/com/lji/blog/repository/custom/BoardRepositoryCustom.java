@@ -18,4 +18,5 @@ import java.util.List;
  */
 public interface BoardRepositoryCustom {
     List<Board> findBoardByCategoryId(Pageable pageable,Long categoryId);
+    List<Board> searchBoardByTitleOrUserName(String title, String userName, Pageable pageable);
 }

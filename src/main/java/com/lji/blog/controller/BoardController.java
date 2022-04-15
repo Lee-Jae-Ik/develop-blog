@@ -36,6 +36,12 @@ public class BoardController extends BaseController {
                                                          @RequestParam(value = "categoryId", required = false) Long categoryId) {
         return responseApi(boardService.showBoardList(pageable,categoryId));
     }
+    @GetMapping("/board/search")
+    public ResponseEntity<BlogApiResponse> searchBoard(@RequestParam(value = "title", required = false) String title,
+                                                       @RequestParam(value = "userName", required = false) String userName,
+                                                       @PageableDefault(size = 10) Pageable pageable) {
+        return responseApi(boardService.searchBoardList(pageable,title,userName));
+    }
 
     @GetMapping("/board/{id}")
     public ResponseEntity<BlogApiResponse> showBoardDetail(@PathVariable Long id) {

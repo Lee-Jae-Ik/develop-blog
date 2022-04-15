@@ -3,7 +3,9 @@ package com.lji.blog.repository.custom.impl;
 import com.lji.blog.model.schema.Board;
 import com.lji.blog.model.schema.QBoard;
 import com.lji.blog.model.schema.QCategory;
+import com.lji.blog.model.schema.QUser;
 import com.lji.blog.repository.custom.BoardRepositoryCustom;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Pageable;
 
@@ -32,6 +34,26 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
                 .leftJoin(QBoard.board.category, QCategory.category)
                 .fetchJoin()
                 .where(categoryId == null ? QBoard.board.categoryId.isNotNull() : QBoard.board.categoryId.eq(categoryId))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+    }
+
+    @Override
+    public List<Board> searchBoardByTitleOrUserName(String title, String userName, Pageable pageable) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+        if (title != null) {
+            booleanBuilder.and(QBoard.board.title.eq(title));
+        }
+        if (userName != null) {
+            booleanBuilder.and(QUser.user.userName.eq(userName));
+        }
+        return jpaQueryFactory
+                .select(QBoard.board)
+                .leftJoin(QBoard.board.category, QCategory.category)
+                .fetchJoin()
+                .from(QBoard.board, QUser.user)
+                .where(booleanBuilder)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

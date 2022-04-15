@@ -18,4 +18,5 @@ public interface BoardService {
     Board saveBoard(BoardSaveDto boardSaveDto);
     BoardListDto showBoardList(Pageable pageable, Long categoryId);
     BoardDetailDto showBoardDetail(Long id);
+    BoardListDto searchBoardList(Pageable pageable, String title, String userName);
 }
