@@ -26,12 +26,14 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
     }
 
     @Override
-    public List<Board> findBoardByCategoryId(Long categoryId) {
+    public List<Board> findBoardByCategoryId(Pageable pageable,Long categoryId) {
         return jpaQueryFactory
                 .selectFrom(QBoard.board)
                 .leftJoin(QBoard.board.category, QCategory.category)
                 .fetchJoin()
                 .where(categoryId == null ? QBoard.board.categoryId.isNotNull() : QBoard.board.categoryId.eq(categoryId))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
     }
 }

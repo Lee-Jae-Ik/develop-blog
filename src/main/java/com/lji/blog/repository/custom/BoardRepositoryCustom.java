@@ -7,7 +7,6 @@ import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * BoardRepository
@@ -18,5 +17,5 @@ import java.util.Optional;
  * @since 2022/03/01
  */
 public interface BoardRepositoryCustom {
-    List<Board> findBoardByCategoryId(Long categoryId);
+    List<Board> findBoardByCategoryId(Pageable pageable,Long categoryId);
 }

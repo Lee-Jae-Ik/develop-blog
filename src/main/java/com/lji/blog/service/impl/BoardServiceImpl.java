@@ -74,14 +74,9 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional
     public BoardListDto showBoardList(Pageable pageable, Long categoryId) {
-        List<Board> boardList = boardRepository.findBoardByCategoryId(categoryId);
+        List<Board> boardList = boardRepository.findBoardByCategoryId(pageable,categoryId);
 
-        final int start = (int) pageable.getOffset();
-        int end = Math.min((start + pageable.getPageSize()), boardList.size());
-
-        Page<Board> boardPage = this.listToPage(start,end,boardList,pageable);
-
-        List<BoardShowDto> boardShowDtoList = boardPage.stream().map(board ->
+        List<BoardShowDto> boardShowDtoList = boardList.stream().map(board ->
                 BoardShowDto.builder()
                         .id(board.getId())
                         .userName(userRepository.findById(board.getUserId()).orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_USER)).getUserName())
