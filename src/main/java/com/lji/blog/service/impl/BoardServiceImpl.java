@@ -131,14 +131,4 @@ public class BoardServiceImpl implements BoardService {
 
         return BoardListDto.builder().boardList(boardShowDtoList).totalBoardCount(boardShowDtoList.size()).build();
     }
-
-    private Page<Board> listToPage(int start, int end, List<Board> boardList, Pageable pageable) {
-        Page<Board> boardPage;
-        if (boardList.size() < 10) {
-            boardPage = new PageImpl<>(boardList.subList(0,boardList.size()), Pageable.unpaged(), boardList.size());
-        } else {
-            boardPage = new PageImpl<>(boardList.subList(start,end),pageable, boardList.size());
-        }
-        return boardPage;
-    }
 }
