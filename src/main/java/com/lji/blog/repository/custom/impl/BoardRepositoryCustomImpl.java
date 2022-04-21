@@ -43,7 +43,7 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
     public List<Board> searchBoardByTitleOrUserName(String title, String userName, Pageable pageable) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if (title != null) {
-            booleanBuilder.and(QBoard.board.title.contains(title));
+            booleanBuilder.and(QBoard.board.title.contains(title)).and(QBoard.board.isNotNull());
         }
         if (userName != null) {
             booleanBuilder.and(QUser.user.userName.contains(userName)).and(QBoard.board.isNotNull());
