@@ -9,6 +9,7 @@ import com.lji.blog.model.dto.BoardShowDto;
 import com.lji.blog.model.schema.Board;
 import com.lji.blog.model.schema.Category;
 import com.lji.blog.model.schema.Comment;
+import com.lji.blog.model.schema.User;
 import com.lji.blog.repository.BoardRepository;
 import com.lji.blog.repository.CategoryRepository;
 import com.lji.blog.repository.CommentRepository;
@@ -53,6 +54,9 @@ public class BoardServiceImpl implements BoardService {
 
         Category findCategory = categoryRepository.findById(boardSaveDto.getCategoryId())
                 .orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_CATEGORY));
+
+        User findUser = userRepository.findById(boardSaveDto.getUserId())
+                .orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_USER));
 
         Board insertBoard = Board.builder()
                 .userId(boardSaveDto.getUserId())
@@ -125,7 +129,7 @@ public class BoardServiceImpl implements BoardService {
                         .commentCount(commentRepository.countCommentByBoardId(board.getId()))
                         .build()).collect(Collectors.toList());
 
-        return BoardListDto.builder().boardList(boardShowDtoList).totalBoardCount(boardList.size()).build();
+        return BoardListDto.builder().boardList(boardShowDtoList).totalBoardCount(boardShowDtoList.size()).build();
     }
 
     private Page<Board> listToPage(int start, int end, List<Board> boardList, Pageable pageable) {

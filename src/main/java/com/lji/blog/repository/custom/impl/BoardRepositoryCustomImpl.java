@@ -43,16 +43,18 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
     public List<Board> searchBoardByTitleOrUserName(String title, String userName, Pageable pageable) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if (title != null) {
-            booleanBuilder.and(QBoard.board.title.eq(title));
+            booleanBuilder.and(QBoard.board.title.contains(title));
         }
         if (userName != null) {
-            booleanBuilder.and(QUser.user.userName.eq(userName));
+            booleanBuilder.and(QUser.user.userName.contains(userName)).and(QBoard.board.isNotNull());
         }
         return jpaQueryFactory
                 .select(QBoard.board)
+                .from(QBoard.board)
                 .leftJoin(QBoard.board.category, QCategory.category)
                 .fetchJoin()
-                .from(QBoard.board, QUser.user)
+                .rightJoin(QBoard.board.user, QUser.user)
+                .fetchJoin()
                 .where(booleanBuilder)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())

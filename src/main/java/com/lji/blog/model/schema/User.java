@@ -3,6 +3,7 @@ package com.lji.blog.model.schema;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

@@ -1,7 +1,12 @@
 package com.lji.blog.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.lji.blog.model.schema.Category;
 import lombok.*;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.WebApplicationContext;
 
 /**
  * BoardVo
@@ -12,6 +17,8 @@ import lombok.*;
  * @since 2022/03/01
  */
 @Getter
+@Component
+@Scope(value = WebApplicationContext.SCOPE_SESSION, proxyMode = ScopedProxyMode.TARGET_CLASS)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class BoardShowDto {
 
