@@ -1,5 +1,6 @@
 package com.lji.blog.model.dto;
 
+import com.lji.blog.model.schema.BoardTag;
 import com.lji.blog.model.schema.Comment;
 import lombok.*;
 
@@ -26,4 +27,5 @@ public class BoardDetailDto {
     private String modifiedDate;
     private String categoryName;
     private List<Comment> commentList;
+    private List<BoardTag> boardTagList;
 }

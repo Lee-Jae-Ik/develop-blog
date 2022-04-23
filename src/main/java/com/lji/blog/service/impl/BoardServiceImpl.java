@@ -6,24 +6,18 @@ import com.lji.blog.model.dto.BoardSaveDto;
 import com.lji.blog.model.response.BlogApiResult;
 import com.lji.blog.model.dto.BoardDetailDto;
 import com.lji.blog.model.dto.BoardShowDto;
-import com.lji.blog.model.schema.Board;
-import com.lji.blog.model.schema.Category;
-import com.lji.blog.model.schema.Comment;
-import com.lji.blog.model.schema.User;
-import com.lji.blog.repository.BoardRepository;
-import com.lji.blog.repository.CategoryRepository;
-import com.lji.blog.repository.CommentRepository;
-import com.lji.blog.repository.UserRepository;
+import com.lji.blog.model.schema.*;
+import com.lji.blog.repository.*;
 import com.lji.blog.service.BoardService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -41,22 +35,40 @@ public class BoardServiceImpl implements BoardService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final BoardRepository boardRepository;
+    private final BoardTagRepository boardTagRepository;
 
-    public BoardServiceImpl(CategoryRepository categoryRepository, UserRepository userRepository, CommentRepository commentRepository, BoardRepository boardRepository) {
+    public BoardServiceImpl(CategoryRepository categoryRepository, UserRepository userRepository, CommentRepository commentRepository, BoardRepository boardRepository, BoardTagRepository boardTagRepository) {
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
         this.boardRepository = boardRepository;
+        this.boardTagRepository = boardTagRepository;
     }
 
     @Override
     public Board saveBoard(BoardSaveDto boardSaveDto) {
+
+        if (boardSaveDto.getBoradTagNameList().size() > 10) {
+            throw new BlogApiRuntimeException(BlogApiResult.OVER_BOARD_TAG_COUNT);
+        }
 
         Category findCategory = categoryRepository.findById(boardSaveDto.getCategoryId())
                 .orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_CATEGORY));
 
         User findUser = userRepository.findById(boardSaveDto.getUserId())
                 .orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_USER));
+
+        List<BoardTag> boardTagList = new ArrayList<>();
+        for (String boardTagName : boardSaveDto.getBoradTagNameList()) {
+            BoardTag findBoardTag = Optional.ofNullable(boardTagRepository.findBoardTagByTagName(boardTagName))
+                    .orElseGet(BoardTag::new);
+            boardTagList.add(BoardTag.builder()
+                            .id(findBoardTag.getId())
+                            .tagName((findBoardTag.getTagName() != null) ? findBoardTag.getTagName() : boardTagName)
+                            .tagCount((findBoardTag.getTagCount() != 0) ? findBoardTag.getTagCount() : 1)
+                            .build());
+        }
+        boardTagRepository.saveAll(boardTagList);
 
         Board insertBoard = Board.builder()
                 .userId(boardSaveDto.getUserId())
@@ -67,6 +79,7 @@ public class BoardServiceImpl implements BoardService {
                 .modifiedDate(LocalDateTime.now())
                 .category(findCategory)
                 .commentList(null)
+                .boardTagList(boardTagList)
                 .build();
 
         findCategory.setPostCount(findCategory.getPostCount() + 1);
@@ -111,6 +124,7 @@ public class BoardServiceImpl implements BoardService {
                 .modifiedDate(board.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                 .categoryName(category.getCategoryName())
                 .commentList(commentList)
+                .boardTagList(board.getBoardTagList())
                 .build();
     }
 

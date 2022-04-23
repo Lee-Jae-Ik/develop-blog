@@ -60,8 +60,11 @@ public class Board {
     @OneToMany
     private List<Comment> commentList;
 
+    @OneToMany
+    private List<BoardTag> boardTagList;
+
     @Builder
-    public Board(Long id, Long userId, String title, LocalDateTime createdDate, String contents, LocalDateTime modifiedDate, Long categoryId, Category category, List<Comment> commentList) {
+    public Board(Long id, Long userId, String title, LocalDateTime createdDate, String contents, LocalDateTime modifiedDate, Long categoryId, Category category, User user, List<Comment> commentList, List<BoardTag> boardTagList) {
         this.id = id;
         this.userId = userId;
         this.title = title;
@@ -70,6 +73,8 @@ public class Board {
         this.modifiedDate = modifiedDate;
         this.categoryId = categoryId;
         this.category = category;
+        this.user = user;
         this.commentList = commentList;
+        this.boardTagList = boardTagList;
     }
 }

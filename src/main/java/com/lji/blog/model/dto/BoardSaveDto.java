@@ -11,6 +11,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import javax.persistence.Column;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * BoardSaveDto
@@ -33,12 +34,14 @@ public class BoardSaveDto {
     @NotNull
     private String contents;
     private Long categoryId;
+    private List<String> boradTagNameList;
 
     @Builder
-    public BoardSaveDto(Long userId, String title, String contents, Long categoryId) {
+    public BoardSaveDto(Long userId, String title, String contents, Long categoryId, List<String> boradTagNameList) {
         this.userId = userId;
         this.title = title;
         this.contents = contents;
         this.categoryId = categoryId;
+        this.boradTagNameList = boradTagNameList;
     }
 }

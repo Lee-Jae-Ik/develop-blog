@@ -24,7 +24,8 @@ public enum BlogApiResult {
     ALREADY_HAVE_CATEGORY(9001, "해당 카테고리는 이미 존재 합니다."),
     NOT_HAVE_BOARD(9002, "해당 게시글은 존재하지 않습니다."),
     NOT_HAVE_CATEGORY(9003, "해당 카테고리는 없습니다."),
-    NOT_HAVE_USER(9002, "해당 유저가 없습니다.")
+    NOT_HAVE_USER(9002, "해당 유저가 없습니다."),
+    OVER_BOARD_TAG_COUNT(9000, "게시글 태그는 최대 10개 까지 등록이 가능합니다.")
     ;
 
     @Getter
