@@ -1,11 +1,8 @@
 package com.lji.blog.service.impl;
 
 import com.lji.blog.exception.BlogApiRuntimeException;
-import com.lji.blog.model.dto.BoardListDto;
-import com.lji.blog.model.dto.BoardSaveDto;
+import com.lji.blog.model.dto.*;
 import com.lji.blog.model.response.BlogApiResult;
-import com.lji.blog.model.dto.BoardDetailDto;
-import com.lji.blog.model.dto.BoardShowDto;
 import com.lji.blog.model.schema.*;
 import com.lji.blog.repository.*;
 import com.lji.blog.service.BoardService;
@@ -65,7 +62,7 @@ public class BoardServiceImpl implements BoardService {
             boardTagList.add(BoardTag.builder()
                             .id(findBoardTag.getId())
                             .tagName((findBoardTag.getTagName() != null) ? findBoardTag.getTagName() : boardTagName)
-                            .tagCount((findBoardTag.getTagCount() != 0) ? findBoardTag.getTagCount() : 1)
+                            .tagCount((findBoardTag.getTagCount() != 0) ? findBoardTag.getTagCount() + 1 : 1)
                             .build());
         }
         boardTagRepository.saveAll(boardTagList);
@@ -80,6 +77,7 @@ public class BoardServiceImpl implements BoardService {
                 .category(findCategory)
                 .commentList(null)
                 .boardTagList(boardTagList)
+                .delYn(false)
                 .build();
 
         findCategory.setPostCount(findCategory.getPostCount() + 1);
@@ -144,5 +142,33 @@ public class BoardServiceImpl implements BoardService {
                         .build()).collect(Collectors.toList());
 
         return BoardListDto.builder().boardList(boardShowDtoList).totalBoardCount(boardShowDtoList.size()).build();
+    }
+
+    @Override
+    public BoardIdDto deleteBoardById(Long id) {
+        Board findBoard = boardRepository.findById(id).orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_BOARD));
+        Category findCategory = categoryRepository.findById(findBoard.getCategoryId()).orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_CATEGORY));
+        findCategory.setPostCount(findCategory.getPostCount() - 1);
+
+        findBoard.getBoardTagList().forEach(boardTag -> {
+            BoardTag findBoardTag = boardTagRepository.findById(boardTag.getId()).orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.SERVER_ERROR));
+            findBoardTag.setTagCount(findBoardTag.getTagCount() - 1);
+        });
+
+        Board deleteBoard = Board.builder()
+                .id(findBoard.getId())
+                .categoryId(findBoard.getCategoryId())
+                .category(findBoard.getCategory())
+                .user(findBoard.getUser())
+                .userId(findBoard.getUserId())
+                .boardTagList(findBoard.getBoardTagList())
+                .title(findBoard.getTitle())
+                .contents(findBoard.getContents())
+                .commentList(findBoard.getCommentList())
+                .delYn(true)
+                .build();
+        boardRepository.save(deleteBoard);
+
+        return BoardIdDto.builder().id(deleteBoard.getId()).build();
     }
 }

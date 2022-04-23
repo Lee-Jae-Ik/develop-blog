@@ -8,6 +8,7 @@ import com.lji.blog.repository.custom.BoardRepositoryCustom;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 
@@ -27,13 +28,23 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
         this.jpaQueryFactory = jpaQueryFactory;
     }
 
+
     @Override
     public List<Board> findBoardByCategoryId(Pageable pageable,Long categoryId) {
+
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+
+        if (categoryId != null) {
+            booleanBuilder.and(QBoard.board.categoryId.eq(categoryId)).and(QBoard.board.delYn.eq(false));
+        } else {
+            booleanBuilder.and(QBoard.board.categoryId.isNotNull()).and(QBoard.board.delYn.eq(false));
+        }
+
         return jpaQueryFactory
                 .selectFrom(QBoard.board)
                 .leftJoin(QBoard.board.category, QCategory.category)
                 .fetchJoin()
-                .where(categoryId == null ? QBoard.board.categoryId.isNotNull() : QBoard.board.categoryId.eq(categoryId))
+                .where(booleanBuilder)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

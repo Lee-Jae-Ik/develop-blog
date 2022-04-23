@@ -47,4 +47,9 @@ public class BoardController extends BaseController {
     public ResponseEntity<BlogApiResponse> showBoardDetail(@PathVariable Long id) {
         return responseApi(boardService.showBoardDetail(id));
     }
+
+    @PostMapping("/board/delete/{id}")
+    public ResponseEntity<BlogApiResponse> deleteBoard(@RequestParam Long id) {
+        return responseApi(boardService.deleteBoardById(id));
+    }
 }

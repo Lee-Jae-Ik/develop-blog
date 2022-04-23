@@ -1,9 +1,6 @@
 package com.lji.blog.model.schema;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -29,6 +26,7 @@ public class BoardTag {
     private String tagName;
 
     @Column(name = "tag_count")
+    @Setter
     private int tagCount;
 
     @Builder

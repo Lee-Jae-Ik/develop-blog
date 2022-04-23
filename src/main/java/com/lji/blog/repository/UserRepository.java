@@ -6,6 +6,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
+
 /**
  * UserRepository
  *
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Repository;
  * @since 2022/02/17
  */
 @Repository
+@Transactional
 public interface UserRepository extends JpaRepository<User, Long> {
     User findUserByUserIdAndUserPassword(String userId,String userPassword);
 }

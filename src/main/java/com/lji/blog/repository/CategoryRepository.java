@@ -4,6 +4,8 @@ import com.lji.blog.model.schema.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import javax.transaction.Transactional;
+
 /**
  * CategoryRepository
  *
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Repository;
  * @since 2022-03-19
  */
 @Repository
+@Transactional
 public interface CategoryRepository extends JpaRepository<Category, Long> {
     Category findCategoryByIdAndCategoryName(Long id, String categoryName);
 }

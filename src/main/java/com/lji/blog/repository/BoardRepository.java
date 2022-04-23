@@ -3,6 +3,7 @@ package com.lji.blog.repository;
 import com.lji.blog.model.schema.Board;
 import com.lji.blog.repository.custom.BoardRepositoryCustom;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 /**
