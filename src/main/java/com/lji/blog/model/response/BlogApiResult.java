@@ -25,7 +25,8 @@ public enum BlogApiResult {
     NOT_HAVE_BOARD(9002, "해당 게시글은 존재하지 않습니다."),
     NOT_HAVE_CATEGORY(9003, "해당 카테고리는 없습니다."),
     NOT_HAVE_USER(9002, "해당 유저가 없습니다."),
-    OVER_BOARD_TAG_COUNT(9000, "게시글 태그는 최대 10개 까지 등록이 가능합니다.")
+    OVER_BOARD_TAG_COUNT(9000, "게시글 태그는 최대 10개 까지 등록이 가능합니다."),
+    WRONG_DATA(8000, "잘못된 데이터 형식 입니다.")
     ;
 
     @Getter

@@ -48,6 +48,12 @@ public class BoardServiceImpl implements BoardService {
         if (boardSaveDto.getBoradTagNameList().size() > 10) {
             throw new BlogApiRuntimeException(BlogApiResult.OVER_BOARD_TAG_COUNT);
         }
+        else if (boardSaveDto.getContents().length() == 0) {
+            throw new BlogApiRuntimeException(BlogApiResult.WRONG_DATA,"게시글의 내용은 필수로 작성 되어야 합니다.");
+        }
+        else if (boardSaveDto.getTitle().length() == 0) {
+            throw new BlogApiRuntimeException(BlogApiResult.WRONG_DATA,"게시글의 제목은 필수로 작성 되어야 합니다.");
+        }
 
         Category findCategory = categoryRepository.findById(boardSaveDto.getCategoryId())
                 .orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_CATEGORY));
@@ -159,6 +165,8 @@ public class BoardServiceImpl implements BoardService {
                 .id(findBoard.getId())
                 .categoryId(findBoard.getCategoryId())
                 .category(findBoard.getCategory())
+                .createdDate(findBoard.getCreatedDate())
+                .modifiedDate(findBoard.getModifiedDate())
                 .user(findBoard.getUser())
                 .userId(findBoard.getUserId())
                 .boardTagList(findBoard.getBoardTagList())
@@ -170,5 +178,45 @@ public class BoardServiceImpl implements BoardService {
         boardRepository.save(deleteBoard);
 
         return BoardIdDto.builder().id(deleteBoard.getId()).build();
+    }
+
+    @Override
+    public BoardDetailDto modifiedBoard(BoardModifiedDto boardModifiedDto) {
+        if (boardModifiedDto.getContents().length() == 0) {
+            throw new BlogApiRuntimeException(BlogApiResult.WRONG_DATA,"게시글의 내용은 필수로 작성 되어야 합니다.");
+        }
+        Board findBoard = boardRepository.findById(boardModifiedDto.getId())
+                .orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_BOARD));
+        Category findCategory = categoryRepository.findById(findBoard.getCategoryId())
+                .orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_CATEGORY));
+        List<Comment> commentList = commentRepository.findCommentsByBoardId(findBoard.getId());
+
+        Board modifiedBoard = Board.builder()
+                .id(findBoard.getId())
+                .categoryId(findBoard.getCategoryId())
+                .category(findBoard.getCategory())
+                .createdDate(findBoard.getCreatedDate())
+                .modifiedDate(findBoard.getModifiedDate())
+                .user(findBoard.getUser())
+                .userId(findBoard.getUserId())
+                .boardTagList(findBoard.getBoardTagList())
+                .title(findBoard.getTitle())
+                .contents(boardModifiedDto.getContents())
+                .commentList(findBoard.getCommentList())
+                .delYn(false)
+                .build();
+        boardRepository.save(modifiedBoard);
+
+        return BoardDetailDto.builder()
+                .id(modifiedBoard.getId())
+                .userName(userRepository.findById(modifiedBoard.getUserId())
+                        .orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_USER)).getUserName())
+                .title(modifiedBoard.getTitle())
+                .contents(modifiedBoard.getContents())
+                .modifiedDate(modifiedBoard.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                .categoryName(findCategory.getCategoryName())
+                .commentList(commentList)
+                .boardTagList(modifiedBoard.getBoardTagList())
+                .build();
     }
 }

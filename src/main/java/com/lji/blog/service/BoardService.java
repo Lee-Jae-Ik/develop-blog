@@ -1,9 +1,6 @@
 package com.lji.blog.service;
 
-import com.lji.blog.model.dto.BoardDetailDto;
-import com.lji.blog.model.dto.BoardIdDto;
-import com.lji.blog.model.dto.BoardListDto;
-import com.lji.blog.model.dto.BoardSaveDto;
+import com.lji.blog.model.dto.*;
 import com.lji.blog.model.schema.Board;
 import org.springframework.data.domain.Pageable;
 
@@ -26,4 +23,5 @@ public interface BoardService {
 
     /* 게시글 삭제 및 수정 */
     BoardIdDto deleteBoardById(Long id);
+    BoardDetailDto modifiedBoard(BoardModifiedDto boardModifiedDto);
 }

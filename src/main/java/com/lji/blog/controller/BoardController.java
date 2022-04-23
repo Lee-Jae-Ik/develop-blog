@@ -1,6 +1,7 @@
 package com.lji.blog.controller;
 
 import com.lji.blog.controller.base.BaseController;
+import com.lji.blog.model.dto.BoardModifiedDto;
 import com.lji.blog.model.dto.BoardSaveDto;
 import com.lji.blog.model.response.BlogApiResponse;
 import com.lji.blog.model.schema.Board;
@@ -48,8 +49,13 @@ public class BoardController extends BaseController {
         return responseApi(boardService.showBoardDetail(id));
     }
 
-    @PostMapping("/board/delete/{id}")
+    @PostMapping("/board/delete")
     public ResponseEntity<BlogApiResponse> deleteBoard(@RequestParam Long id) {
         return responseApi(boardService.deleteBoardById(id));
+    }
+
+    @PostMapping("/board/update")
+    public ResponseEntity<BlogApiResponse> modifiedBoard(@RequestBody BoardModifiedDto boardModifiedDto) {
+        return responseApi(boardService.modifiedBoard(boardModifiedDto));
     }
 }
