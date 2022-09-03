@@ -16,6 +16,7 @@ import java.util.List;
  * @since 2022-04-03
  */
 @Repository
+@Transactional
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     List<Comment> findCommentsByBoardId(Long boardId);
     int countCommentByBoardId(Long boardId);

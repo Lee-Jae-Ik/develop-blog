@@ -1,29 +1,20 @@
 package com.lji.blog.service.impl;
 
 import com.lji.blog.exception.BlogApiRuntimeException;
-import com.lji.blog.model.dto.BoardListDto;
-import com.lji.blog.model.dto.BoardSaveDto;
+import com.lji.blog.model.dto.*;
 import com.lji.blog.model.response.BlogApiResult;
-import com.lji.blog.model.dto.BoardDetailDto;
-import com.lji.blog.model.dto.BoardShowDto;
-import com.lji.blog.model.schema.Board;
-import com.lji.blog.model.schema.Category;
-import com.lji.blog.model.schema.Comment;
-import com.lji.blog.model.schema.User;
-import com.lji.blog.repository.BoardRepository;
-import com.lji.blog.repository.CategoryRepository;
-import com.lji.blog.repository.CommentRepository;
-import com.lji.blog.repository.UserRepository;
+import com.lji.blog.model.schema.*;
+import com.lji.blog.repository.*;
 import com.lji.blog.service.BoardService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -41,22 +32,46 @@ public class BoardServiceImpl implements BoardService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final BoardRepository boardRepository;
+    private final BoardTagRepository boardTagRepository;
 
-    public BoardServiceImpl(CategoryRepository categoryRepository, UserRepository userRepository, CommentRepository commentRepository, BoardRepository boardRepository) {
+    public BoardServiceImpl(CategoryRepository categoryRepository, UserRepository userRepository, CommentRepository commentRepository, BoardRepository boardRepository, BoardTagRepository boardTagRepository) {
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
         this.boardRepository = boardRepository;
+        this.boardTagRepository = boardTagRepository;
     }
 
     @Override
     public Board saveBoard(BoardSaveDto boardSaveDto) {
+
+        if (boardSaveDto.getBoradTagNameList().size() > 10) {
+            throw new BlogApiRuntimeException(BlogApiResult.OVER_BOARD_TAG_COUNT);
+        }
+        else if (boardSaveDto.getContents().length() == 0) {
+            throw new BlogApiRuntimeException(BlogApiResult.WRONG_DATA,"게시글의 내용은 필수로 작성 되어야 합니다.");
+        }
+        else if (boardSaveDto.getTitle().length() == 0) {
+            throw new BlogApiRuntimeException(BlogApiResult.WRONG_DATA,"게시글의 제목은 필수로 작성 되어야 합니다.");
+        }
 
         Category findCategory = categoryRepository.findById(boardSaveDto.getCategoryId())
                 .orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_CATEGORY));
 
         User findUser = userRepository.findById(boardSaveDto.getUserId())
                 .orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_USER));
+
+        List<BoardTag> boardTagList = new ArrayList<>();
+        for (String boardTagName : boardSaveDto.getBoradTagNameList()) {
+            BoardTag findBoardTag = Optional.ofNullable(boardTagRepository.findBoardTagByTagName(boardTagName))
+                    .orElseGet(BoardTag::new);
+            boardTagList.add(BoardTag.builder()
+                            .id(findBoardTag.getId())
+                            .tagName((findBoardTag.getTagName() != null) ? findBoardTag.getTagName() : boardTagName)
+                            .tagCount((findBoardTag.getTagCount() != 0) ? findBoardTag.getTagCount() + 1 : 1)
+                            .build());
+        }
+        boardTagRepository.saveAll(boardTagList);
 
         Board insertBoard = Board.builder()
                 .userId(boardSaveDto.getUserId())
@@ -67,6 +82,8 @@ public class BoardServiceImpl implements BoardService {
                 .modifiedDate(LocalDateTime.now())
                 .category(findCategory)
                 .commentList(null)
+                .boardTagList(boardTagList)
+                .delYn(false)
                 .build();
 
         findCategory.setPostCount(findCategory.getPostCount() + 1);
@@ -111,6 +128,7 @@ public class BoardServiceImpl implements BoardService {
                 .modifiedDate(board.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
                 .categoryName(category.getCategoryName())
                 .commentList(commentList)
+                .boardTagList(board.getBoardTagList())
                 .build();
     }
 
@@ -130,5 +148,75 @@ public class BoardServiceImpl implements BoardService {
                         .build()).collect(Collectors.toList());
 
         return BoardListDto.builder().boardList(boardShowDtoList).totalBoardCount(boardShowDtoList.size()).build();
+    }
+
+    @Override
+    public BoardIdDto deleteBoardById(Long id) {
+        Board findBoard = boardRepository.findById(id).orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_BOARD));
+        Category findCategory = categoryRepository.findById(findBoard.getCategoryId()).orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_CATEGORY));
+        findCategory.setPostCount(findCategory.getPostCount() - 1);
+
+        findBoard.getBoardTagList().forEach(boardTag -> {
+            BoardTag findBoardTag = boardTagRepository.findById(boardTag.getId()).orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.SERVER_ERROR));
+            findBoardTag.setTagCount(findBoardTag.getTagCount() - 1);
+        });
+
+        Board deleteBoard = Board.builder()
+                .id(findBoard.getId())
+                .categoryId(findBoard.getCategoryId())
+                .category(findBoard.getCategory())
+                .createdDate(findBoard.getCreatedDate())
+                .modifiedDate(findBoard.getModifiedDate())
+                .user(findBoard.getUser())
+                .userId(findBoard.getUserId())
+                .boardTagList(findBoard.getBoardTagList())
+                .title(findBoard.getTitle())
+                .contents(findBoard.getContents())
+                .commentList(findBoard.getCommentList())
+                .delYn(true)
+                .build();
+        boardRepository.save(deleteBoard);
+
+        return BoardIdDto.builder().id(deleteBoard.getId()).build();
+    }
+
+    @Override
+    public BoardDetailDto modifiedBoard(BoardModifiedDto boardModifiedDto) {
+        if (boardModifiedDto.getContents().length() == 0) {
+            throw new BlogApiRuntimeException(BlogApiResult.WRONG_DATA,"게시글의 내용은 필수로 작성 되어야 합니다.");
+        }
+        Board findBoard = boardRepository.findById(boardModifiedDto.getId())
+                .orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_BOARD));
+        Category findCategory = categoryRepository.findById(findBoard.getCategoryId())
+                .orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_CATEGORY));
+        List<Comment> commentList = commentRepository.findCommentsByBoardId(findBoard.getId());
+
+        Board modifiedBoard = Board.builder()
+                .id(findBoard.getId())
+                .categoryId(findBoard.getCategoryId())
+                .category(findBoard.getCategory())
+                .createdDate(findBoard.getCreatedDate())
+                .modifiedDate(findBoard.getModifiedDate())
+                .user(findBoard.getUser())
+                .userId(findBoard.getUserId())
+                .boardTagList(findBoard.getBoardTagList())
+                .title(findBoard.getTitle())
+                .contents(boardModifiedDto.getContents())
+                .commentList(findBoard.getCommentList())
+                .delYn(false)
+                .build();
+        boardRepository.save(modifiedBoard);
+
+        return BoardDetailDto.builder()
+                .id(modifiedBoard.getId())
+                .userName(userRepository.findById(modifiedBoard.getUserId())
+                        .orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_USER)).getUserName())
+                .title(modifiedBoard.getTitle())
+                .contents(modifiedBoard.getContents())
+                .modifiedDate(modifiedBoard.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                .categoryName(findCategory.getCategoryName())
+                .commentList(commentList)
+                .boardTagList(modifiedBoard.getBoardTagList())
+                .build();
     }
 }

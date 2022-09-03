@@ -57,11 +57,17 @@ public class Board {
     @JoinColumn(name = "user_id", insertable = false, updatable = false)
     private User user;
 
-    @OneToMany
+    @ManyToMany
     private List<Comment> commentList;
 
+    @ManyToMany
+    private List<BoardTag> boardTagList;
+
+    @Column(name = "del_yn")
+    private boolean delYn;
+
     @Builder
-    public Board(Long id, Long userId, String title, LocalDateTime createdDate, String contents, LocalDateTime modifiedDate, Long categoryId, Category category, List<Comment> commentList) {
+    public Board(Long id, Long userId, String title, LocalDateTime createdDate, String contents, LocalDateTime modifiedDate, Long categoryId, Category category, User user, List<Comment> commentList, List<BoardTag> boardTagList, boolean delYn) {
         this.id = id;
         this.userId = userId;
         this.title = title;
@@ -70,6 +76,9 @@ public class Board {
         this.modifiedDate = modifiedDate;
         this.categoryId = categoryId;
         this.category = category;
+        this.user = user;
         this.commentList = commentList;
+        this.boardTagList = boardTagList;
+        this.delYn = delYn;
     }
 }
