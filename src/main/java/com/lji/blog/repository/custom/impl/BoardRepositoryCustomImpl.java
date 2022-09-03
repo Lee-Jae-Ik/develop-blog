@@ -8,6 +8,7 @@ import com.lji.blog.repository.custom.BoardRepositoryCustom;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Pageable;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -42,12 +43,11 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
     @Override
     public List<Board> searchBoardByTitleOrUserName(String title, String userName, Pageable pageable) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
-        if (title != null) {
-            booleanBuilder.and(QBoard.board.title.contains(title)).and(QBoard.board.isNotNull());
+
+        if (StringUtils.hasText(title) && StringUtils.hasText(userName)) {
+            booleanBuilder.and(QBoard.board.title.contains(title)).and(QUser.user.userName.contains(userName)).and(QBoard.board.isNotNull());
         }
-        if (userName != null) {
-            booleanBuilder.and(QUser.user.userName.contains(userName)).and(QBoard.board.isNotNull());
-        }
+
         return jpaQueryFactory
                 .select(QBoard.board)
                 .from(QBoard.board)
