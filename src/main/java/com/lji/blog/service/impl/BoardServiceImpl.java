@@ -58,7 +58,7 @@ public class BoardServiceImpl implements BoardService {
         Category findCategory = categoryRepository.findById(boardSaveDto.getCategoryId())
                 .orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_CATEGORY));
 
-        User findUser = userRepository.findById(boardSaveDto.getUserId())
+        userRepository.findById(boardSaveDto.getUserId())
                 .orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_USER));
 
         List<BoardTag> boardTagList = new ArrayList<>();
