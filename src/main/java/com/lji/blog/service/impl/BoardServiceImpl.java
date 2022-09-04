@@ -97,16 +97,7 @@ public class BoardServiceImpl implements BoardService {
     public BoardListDto showBoardList(Pageable pageable, Long categoryId) {
         List<Board> boardList = boardRepository.findBoardByCategoryId(pageable,categoryId);
 
-        List<BoardShowDto> boardShowDtoList = boardList.stream().map(board ->
-                BoardShowDto.builder()
-                        .id(board.getId())
-                        .userName(userRepository.findById(board.getUserId()).orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_USER)).getUserName())
-                        .title(board.getTitle())
-                        .createdDate(board.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
-                        .modifiedDate(board.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
-                        .category(categoryRepository.findById(board.getCategoryId()).orElse(null))
-                        .commentCount(commentRepository.countCommentByBoardId(board.getId()))
-                        .build()).collect(Collectors.toList());
+        List<BoardShowDto> boardShowDtoList = convertListEntityToDto(boardList);
 
         return BoardListDto.builder()
                 .boardList(boardShowDtoList)
@@ -136,16 +127,7 @@ public class BoardServiceImpl implements BoardService {
     public BoardListDto searchBoardList(Pageable pageable, String title, String userName) {
         List<Board> boardList = boardRepository.searchBoardByTitleOrUserName(title,userName,pageable);
 
-        List<BoardShowDto> boardShowDtoList = boardList.stream().map(board ->
-                BoardShowDto.builder()
-                        .id(board.getId())
-                        .userName(userRepository.findById(board.getUserId()).orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_USER)).getUserName())
-                        .title(board.getTitle())
-                        .createdDate(board.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
-                        .modifiedDate(board.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
-                        .category(categoryRepository.findById(board.getCategoryId()).orElse(null))
-                        .commentCount(commentRepository.countCommentByBoardId(board.getId()))
-                        .build()).collect(Collectors.toList());
+        List<BoardShowDto> boardShowDtoList = convertListEntityToDto(boardList);
 
         return BoardListDto.builder().boardList(boardShowDtoList).totalBoardCount(boardShowDtoList.size()).build();
     }
@@ -218,5 +200,25 @@ public class BoardServiceImpl implements BoardService {
                 .commentList(commentList)
                 .boardTagList(modifiedBoard.getBoardTagList())
                 .build();
+    }
+
+
+    /**
+     * Board Entity List -> BoardShowDto List Converter
+     * @param boardList
+     * @return
+     */
+    private List<BoardShowDto> convertListEntityToDto(List<Board> boardList) {
+
+        return boardList.stream().map(board ->
+                BoardShowDto.builder()
+                        .id(board.getId())
+                        .userName(userRepository.findById(board.getUserId()).orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_USER)).getUserName())
+                        .title(board.getTitle())
+                        .createdDate(board.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                        .modifiedDate(board.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                        .category(categoryRepository.findById(board.getCategoryId()).orElse(null))
+                        .commentCount(commentRepository.countCommentByBoardId(board.getId()))
+                        .build()).collect(Collectors.toList());
     }
 }
