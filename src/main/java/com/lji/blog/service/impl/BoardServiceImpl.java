@@ -8,6 +8,7 @@ import com.lji.blog.repository.*;
 import com.lji.blog.service.BoardService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -48,10 +49,10 @@ public class BoardServiceImpl implements BoardService {
         if (boardSaveDto.getBoradTagNameList().size() > 10) {
             throw new BlogApiRuntimeException(BlogApiResult.OVER_BOARD_TAG_COUNT);
         }
-        else if (boardSaveDto.getContents().length() == 0) {
+        else if (boardSaveDto.getContents().length() == 0 || !StringUtils.hasText(boardSaveDto.getContents())) {
             throw new BlogApiRuntimeException(BlogApiResult.WRONG_DATA,"게시글의 내용은 필수로 작성 되어야 합니다.");
         }
-        else if (boardSaveDto.getTitle().length() == 0) {
+        else if (boardSaveDto.getTitle().length() == 0 || !StringUtils.hasText(boardSaveDto.getTitle())) {
             throw new BlogApiRuntimeException(BlogApiResult.WRONG_DATA,"게시글의 제목은 필수로 작성 되어야 합니다.");
         }
 
