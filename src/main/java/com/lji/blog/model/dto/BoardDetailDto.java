@@ -1,9 +1,14 @@
 package com.lji.blog.model.dto;
 
+import com.lji.blog.exception.BlogApiRuntimeException;
+import com.lji.blog.model.response.BlogApiResult;
+import com.lji.blog.model.schema.Board;
 import com.lji.blog.model.schema.BoardTag;
+import com.lji.blog.model.schema.Category;
 import com.lji.blog.model.schema.Comment;
 import lombok.*;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -28,4 +33,20 @@ public class BoardDetailDto {
     private String categoryName;
     private List<Comment> commentList;
     private List<BoardTag> boardTagList;
+
+
+    /* BoardDetailDto 생성 */
+    public static BoardDetailDto createBoardDetailDtoUseBoardEntity(Board board, Category category, List<Comment> commentList) {
+
+        return BoardDetailDto.builder()
+                .id(board.getId())
+                .userName(board.getUser().getUserName())
+                .title(board.getTitle())
+                .contents(board.getContents())
+                .modifiedDate(board.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+                .categoryName(category.getCategoryName())
+                .commentList(commentList)
+                .boardTagList(board.getBoardTagList())
+                .build();
+    }
 }

@@ -11,6 +11,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 /**
  * BoardContorller
  *
@@ -28,7 +30,7 @@ public class BoardController extends BaseController {
     }
 
     @PostMapping("/board")
-    public ResponseEntity<BlogApiResponse> saveBoard(@RequestBody BoardSaveDto boardSaveDto) {
+    public ResponseEntity<BlogApiResponse> saveBoard(@RequestBody @Valid BoardSaveDto boardSaveDto) {
         return responseApi(boardService.saveBoard(boardSaveDto));
     }
 

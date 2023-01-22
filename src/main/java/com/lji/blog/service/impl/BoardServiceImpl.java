@@ -46,10 +46,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public Board saveBoard(BoardSaveDto boardSaveDto) {
 
-        if (boardSaveDto.getBoradTagNameList().size() > 10) {
-            throw new BlogApiRuntimeException(BlogApiResult.OVER_BOARD_TAG_COUNT);
-        }
-        else if (boardSaveDto.getContents().length() == 0 || !StringUtils.hasText(boardSaveDto.getContents())) {
+        if (boardSaveDto.getContents().length() == 0 || !StringUtils.hasText(boardSaveDto.getContents())) {
             throw new BlogApiRuntimeException(BlogApiResult.WRONG_DATA,"게시글의 내용은 필수로 작성 되어야 합니다.");
         }
         else if (boardSaveDto.getTitle().length() == 0 || !StringUtils.hasText(boardSaveDto.getTitle())) {
@@ -63,29 +60,19 @@ public class BoardServiceImpl implements BoardService {
                 .orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_USER));
 
         List<BoardTag> boardTagList = new ArrayList<>();
-        for (String boardTagName : boardSaveDto.getBoradTagNameList()) {
+        boardSaveDto.getBoradTagNameList().forEach(boardTagName -> {
             BoardTag findBoardTag = Optional.ofNullable(boardTagRepository.findBoardTagByTagName(boardTagName))
                     .orElseGet(BoardTag::new);
             boardTagList.add(BoardTag.builder()
-                            .id(findBoardTag.getId())
-                            .tagName((findBoardTag.getTagName() != null) ? findBoardTag.getTagName() : boardTagName)
-                            .tagCount((findBoardTag.getTagCount() != 0) ? findBoardTag.getTagCount() + 1 : 1)
-                            .build());
-        }
+                    .id(findBoardTag.getId())
+                    .tagName((findBoardTag.getTagName() != null) ? findBoardTag.getTagName() : boardTagName)
+                    .tagCount(findBoardTag.getTagCount() + 1)
+                    .build());
+        });
+
         boardTagRepository.saveAll(boardTagList);
 
-        Board insertBoard = Board.builder()
-                .userId(boardSaveDto.getUserId())
-                .categoryId(boardSaveDto.getCategoryId())
-                .title(boardSaveDto.getTitle())
-                .contents(boardSaveDto.getContents())
-                .createdDate(LocalDateTime.now())
-                .modifiedDate(LocalDateTime.now())
-                .category(findCategory)
-                .commentList(null)
-                .boardTagList(boardTagList)
-                .delYn(false)
-                .build();
+        Board insertBoard = Board.createBoard(boardSaveDto,findCategory,boardTagList);
 
         findCategory.setPostCount(findCategory.getPostCount() + 1);
         boardRepository.save(insertBoard);
@@ -112,16 +99,7 @@ public class BoardServiceImpl implements BoardService {
         Category category = categoryRepository.findById(board.getCategoryId()).orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_CATEGORY));
         List<Comment> commentList = commentRepository.findCommentsByBoardId(board.getId());
 
-        return BoardDetailDto.builder()
-                .id(board.getId())
-                .userName(userRepository.findById(board.getUserId()).orElseThrow(() -> new BlogApiRuntimeException(BlogApiResult.NOT_HAVE_USER)).getUserName())
-                .title(board.getTitle())
-                .contents(board.getContents())
-                .modifiedDate(board.getModifiedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
-                .categoryName(category.getCategoryName())
-                .commentList(commentList)
-                .boardTagList(board.getBoardTagList())
-                .build();
+        return BoardDetailDto.createBoardDetailDtoUseBoardEntity(board,category,commentList);
     }
 
     @Override

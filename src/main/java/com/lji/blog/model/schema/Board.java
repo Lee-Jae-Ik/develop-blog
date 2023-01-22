@@ -3,6 +3,7 @@ package com.lji.blog.model.schema;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.lji.blog.model.dto.BoardSaveDto;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -21,6 +22,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@Table(name = "board")
 public class Board {
 
     @Id
@@ -80,5 +82,20 @@ public class Board {
         this.commentList = commentList;
         this.boardTagList = boardTagList;
         this.delYn = delYn;
+    }
+
+    public static Board createBoard(BoardSaveDto boardSaveDto, Category category, List<BoardTag> boardTagList) {
+        return Board.builder()
+                .userId(boardSaveDto.getUserId())
+                .categoryId(boardSaveDto.getCategoryId())
+                .title(boardSaveDto.getTitle())
+                .contents(boardSaveDto.getContents())
+                .createdDate(LocalDateTime.now())
+                .modifiedDate(LocalDateTime.now())
+                .category(category)
+                .commentList(null)
+                .boardTagList(boardTagList)
+                .delYn(false)
+                .build();
     }
 }

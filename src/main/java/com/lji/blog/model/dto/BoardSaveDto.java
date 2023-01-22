@@ -1,5 +1,6 @@
 package com.lji.blog.model.dto;
 
+import com.lji.blog.aop.annotation.BoardTag;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,6 +35,8 @@ public class BoardSaveDto {
     @NotNull
     private String contents;
     private Long categoryId;
+
+    @BoardTag
     private List<String> boradTagNameList;
 
     @Builder
